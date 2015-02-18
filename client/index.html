@@ -13,30 +13,28 @@
     <script src="scripts/app.js"></script>
   </head>
   <body>
-    <div id="main">
+    <header>
       <h1>chatterbox</h1>
-
-    <div class="message_display">
-      <div class="newestMessages">
-        <span class="newMessageNum">
-
-        </span>
-        <button class="btn update">
-          View recent
-        </button>
-
+      <div class="select-room">
+        <select class='room-select'>
+          <option name="main room" value="main room">Main room</option>
+        </select>
       </div>
-    </div>
-    <div class="input_form">
-      <div class="form_holder">
+      <div class="user-name"><span class"chat-as">Chatting As: </span><span class="this-user"></span</div>
+    </header>
+    <div id="main">
+      <div class="newestMessages"></div>
+      <div class="message_display"></div>
+      <div class="input_form">
+        <div class="form_holder">
         <form>
         <textarea id="message" name="message" rows="6" cols="60">
 
         </textarea>
         </form>
-      </div>
+        </div>
       <button class="btn submit">Submit</button>
-    </div>
+      </div>
     </div>
   </body>
 </html>

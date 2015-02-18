@@ -1,5 +1,5 @@
 body {
-    background: #eee;
+    background: #E9820F;
     text-align: center;
     padding: 0 25px;
     font-family: arial, sans-serif;
@@ -7,23 +7,43 @@ body {
 
 #main {
     width: 500px;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40px;
     text-align: left;
     background: white;
-    padding: 50px 60px;
+    padding: 5px 60px 50px 60px;
     border: solid #ddd;
     border-width: 0 1px 1px 1px;
 }
 
-#main h1 {
+header {
+    text-align: left;
+    width: 500px;
+    margin: auto;
+}
+
+header h1 {
+    color: #0F75E9;
+    /*display: inline;*/
     margin-top: 0;
     font-size: 35px;
     margin-bottom: 5px;
-    padding: 5px;
+    padding: 5px 0;
+    text-align: left;
 }
 
-#main h1 span {
+header h1 span {
     font-style:italic;
+}
+
+.user-name {
+    float:left;
+}
+
+.select-room {
+    float:right;
+    margin-top:5px;
 }
 
 #main ul {
@@ -82,3 +102,35 @@ form input[type=text] {
 .spinner img {
     padding: 10px;
 }
+
+.message_display {
+    height: 450px;
+    overflow-y: scroll;
+}
+
+.chat-as {
+    color: #333333;
+}
+
+.this-user {
+    color: #1994C3;
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.message-user {
+    color: #1994C3;
+    font-size: 1.1em;
+}
+.message-date {
+   color: #333333;
+   font-weight: bold;
+   font-size: 0.9em;
+}
+.message-text {
+  color: #333333;
+  font-size: 0.9em;
+}
+
+
+
