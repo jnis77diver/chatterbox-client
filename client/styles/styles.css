@@ -122,6 +122,9 @@ form input[type=text] {
     color: #1994C3;
     font-size: 1.1em;
 }
+.message-user:hover {
+    cursor: pointer;
+}
 .message-date {
    color: #333333;
    font-weight: bold;
@@ -132,5 +135,22 @@ form input[type=text] {
   font-size: 0.9em;
 }
 
+textarea {
+    margin: 20px 0 0 0;
+}
+.new-room-text {
+    color: #333333;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+.optional-room {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #eaeaea;
+    border-radius: 3px;
+}
+.bold-user {
+    font-weight: bold;
+}
 
 

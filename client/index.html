@@ -16,6 +16,7 @@
     <header>
       <h1>chatterbox</h1>
       <div class="select-room">
+        <span>Current Room</span>
         <select class='room-select'>
           <option name="main room" value="main room">Main room</option>
         </select>
@@ -27,13 +28,15 @@
       <div class="message_display"></div>
       <div class="input_form">
         <div class="form_holder">
-        <form>
         <textarea id="message" name="message" rows="6" cols="60">
-
-        </textarea>
-        </form>
+        </textarea><br>
+        <button class="btn submit">Submit</button>
         </div>
-      <button class="btn submit">Submit</button>
+        <div style="clear: both;"></div>
+        <div class="optional-room">
+          <p class="new-room-text">OPTIONAL:<br>You can create a new room or select an existing room above. You must submit a message with your new room name in the text box.</p>
+          <span>Create a Room</span><input type="text" name="create-room" placeholder="Create a room">
+        </div>
       </div>
     </div>
   </body>

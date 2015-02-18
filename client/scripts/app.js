@@ -1,5 +1,5 @@
 $(document).ready(function(){
-  var latestMessageDate; //remove this
+  var latestMessageDate;
   var currentRoom = "main room";
   var roomHolder = {};
   var userObj = {
@@ -8,6 +8,8 @@ $(document).ready(function(){
   };
   //set up init function to execute on load
   var init = function(latestDate,roomName,user){ // gets all messages currently found in server
+    // console.log("currentRoom is ", currentRoom);
+    // console.log("latestDate is ", latestDate);
     if( !userObj.username ){
       var temp = prompt('Select a username');
       userObj.username = sanitize(temp);
@@ -18,13 +20,15 @@ $(document).ready(function(){
       // where: { createdAt:{ $gte :{"__type":"Date","iso":"2015-02-17T20:06:47.133Z"}}}
     };
     if( latestDate ) {
-      console.log('latestDate is',latestDate);
+      // console.log('latestDate is',latestDate);
       dataOptions.where = {createdAt:{$gt:{"__type":"Date","iso":""+ latestDate +""}}};
     }
     if ( roomName ){
       dataOptions.where.roomname = {"$in": [sanitize(roomName)]};
     }
-    console.log("dataOptions is ", dataOptions);
+    if( roomName === "main room" || roomName === "Main room" ) {
+      delete dataOptions["where"];
+    }
     $.ajax({
       url: 'https://api.parse.com/1/classes/chatterbox',
       type: 'GET',
@@ -32,7 +36,7 @@ $(document).ready(function(){
       //contentType: 'application/json',
       dataType: 'json',
       success: function (data) {
-        console.log('This is ',data);
+        // console.log('This is ',data);
         displayMessagesAndRooms(data);
         //set rooms
       },
@@ -62,7 +66,7 @@ $(document).ready(function(){
     var $newMessage = $("<div></div>");
     var sanitizedUsername = sanitize(nextMessageObj.username);
     var sanitizedText = sanitize(nextMessageObj.text);
-    var messageText = "<p><span class='message-user'>"+sanitizedUsername+"</span>" +  "   <span class='message-date'>" +nextMessageObj.createdAt+"</span><br><span class='message-text'>" + sanitizedText +"</span></p>";
+    var messageText = "<p><a class='message-user'>"+sanitizedUsername+"</a>" +  "   <span class='message-date'>" +nextMessageObj.createdAt+"</span><br><span class='message-text'>" + sanitizedText +"</span></p>";
     var parsedMessage = $.parseHTML(messageText);
     return $newMessage.html(parsedMessage);
   };
@@ -77,7 +81,7 @@ $(document).ready(function(){
         $divHolder.append(thisMessage);
         //add new rooms to roomHolder
         var thisRoom = messageObj.roomname;
-        if( !roomHolder[thisRoom] && thisRoom !== undefined && thisRoom.length > 0 ) {
+        if( !roomHolder[thisRoom] && thisRoom !== undefined && thisRoom !== null && thisRoom.length > 0 ) {
           roomHolder[thisRoom] = thisRoom;
           var newOption = $('<option></option');
           $(newOption).attr('name', thisRoom).val(thisRoom).text(thisRoom);
@@ -95,7 +99,18 @@ $(document).ready(function(){
     var $divHolder = newMessageIterator(arrayOfData);
     var divHolderContents = $divHolder.html();
     $('.message_display').append(divHolderContents);
-    latestMessageDate = arrayOfData[0].createdAt;
+    if( arrayOfData[0] ) {
+      // console.log("arrayOfData true", arrayOfData[0]);
+      latestMessageDate = arrayOfData[0].createdAt;
+      // console.log("latestMessageDate is ", latestMessageDate);
+    } else {
+      // console.log("arrayOfData false", arrayOfData[0]);
+    }
+    if( $('.message_display').children().length === 0 ) {
+      $('.message_display').text('Sorry, no messages to display');
+    }
+    //set event listener on users in the message list (to be able to friend)
+    wrapperForFriend();
   };
 
 
@@ -112,11 +127,14 @@ $(document).ready(function(){
     //get current date, user and room name, encode into a message object
     //
     var userMessage = sanitize($('#message').val());
+    if( $('input').val() !== "" ) {
+      var currentRoom = sanitize($('input').val());
+      // console.log("currentRoom is ", currentRoom);
+    }
     var message = {
       'username': userObj.username,
       'text': userMessage,
-      'roomname': 'HRR4 Lounge',
-      'friend': 'Jorge'
+      'roomname': currentRoom,
     };
     $.ajax({
       url: 'https://api.parse.com/1/classes/chatterbox',
@@ -124,7 +142,8 @@ $(document).ready(function(){
       data: JSON.stringify(message),
       contentType: 'application/json',
       success: function (data) {
-        console.log('Submit is ',data);
+        // console.log('Submit is ',data);
+        init(latestMessageDate, currentRoom);
       },
       error: function (data) {
         console.error(data,' failed');
@@ -140,30 +159,53 @@ $(document).ready(function(){
     currentRoom = roomName;
   };
 
-  var createRoom = function(roomName){
-    //add option to drop-down menu for newly created room and display
-    //display messages for that room only
-    //call selectRoom
+  var friendOrUnfriend = function(username) {
+    //add username to friend list
+    if( !userObj.friends[username] ) { userObj.friends[username] = true; }
+    else { userObj.friends[username] = !userObj.friends[username] }
+    //bold friends
+    $('.message-user').each(function(elem) {
+      if( username === $(this).text() ) {
+        if( userObj.friends[username] === true ) {
+          $(this).addClass('bold-user');
+        } else {
+          $(this).removeClass('bold-user');
+        }
+      }
+    });
   };
 
+  var wrapperForFriend = function() {
+    $(".message-user").on('click', function() {
+      var userToFriend = $(this).text();
+      friendOrUnfriend(userToFriend);
+    });
+  };
+
+
   $('.update').on('click',function(){
-    console.log("got here");
+    // console.log("got here");
     init(latestMessageDate);
   });
 
   $('.submit').on('click',function(){
     submitMessage();
-    init(latestMessageDate);
   });
 
   $('.room-select').change(function(){
-    var selected = $('.room-select').find(":selected").text();
-    console.log('selected is',selected);
+    var selected = $('.room-select').find(":selected").attr('name');
+    // console.log('selected is',selected);
      $('.message_display').html('');
     selectRoom(selected);
   });
 
+
   init();
+
+  setInterval(function() {
+    init(latestMessageDate, currentRoom);
+  }, 500);
+
 });
 
 // friend property stores objects
